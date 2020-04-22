@@ -10,6 +10,7 @@ const STATS = ({asin, collection}) => gql`
     {
         Products(collection: "${collection}", asin: "${asin}", stats: true) {
             stats {
+				category,
                 price,
                 rank,
                 rating,
@@ -20,10 +21,34 @@ const STATS = ({asin, collection}) => gql`
     }
 `
 
+const ProductChartContainer = styled.div`
+	flex: 1;
+	height: 240px;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(25, 25, 25, 0.05);
+	border: 1px solid #efefef;
+	background: #fff;
+`
+
+const ProductChartTitle = styled.h1`
+	margin: 0 0 20px;
+	font-size: 16px;
+	line-height: 20px;
+`
+
 const ProductChartWrapper = styled.div`
-    width: 100%;
-    max-width: ${window.screen.width}
-	height: 400px;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 200px;
+	overflow: hidden;
+
+	.Voronoi {
+		cursor: crosshair;
+	}
 `
 
 const ProductChart = (props) => {
@@ -43,14 +68,57 @@ const ProductChart = (props) => {
 		primaryCursorValue: null,
 	})
 
-	const datums = data
-		? data.Products[0].stats.map((entry) => {
-				return {
-					x: new Date(entry.timestamp).setHours(0, 0, 0, 0),
-					y: entry.rank,
-				}
-		  })
+	const ProductChartCategories = data
+		? [
+				...new Set(
+					data.Products[0].stats.map((entry) => entry.category)
+				),
+		  ].filter(Boolean)
 		: null
+
+	const ProductChartSets = data
+		? [
+				...ProductChartCategories.map((category, index) => {
+					if (props.metric !== 'rank' && index > 0) {
+						return null
+					}
+
+					return {
+						label:
+							props.metric === 'rank'
+								? category
+								: props.metric[0].toUpperCase() +
+								  props.metric.slice(1),
+						datums: data.Products[0].stats
+							.map((entry) => {
+								if (entry.category !== category) {
+									return false
+								}
+
+								return {
+									x: new Date(entry.timestamp).setHours(
+										0,
+										0,
+										0,
+										0
+									),
+									y:
+										props.metric === 'price'
+											? entry.price
+													?.replace('$', '')
+													?.split(' ')[0] ?? null
+											: entry[props.metric],
+								}
+							})
+							.filter(Boolean),
+					}
+				}),
+		  ].filter(Boolean)
+		: null
+
+	if (props.metric === 'price' && data) {
+		console.log(ProductChartSets)
+	}
 
 	const ProductChartSeries = React.useMemo(
 		() => ({
@@ -79,15 +147,9 @@ const ProductChart = (props) => {
 		[]
 	)
 
-	const ProductChartData = React.useMemo(
-		() => [
-			{
-				label: 'Rank',
-				datums,
-			},
-		],
-		[datums]
-	)
+	const ProductChartData = React.useMemo(() => ProductChartSets, [
+		ProductChartSets,
+	])
 
 	const onFocus = React.useCallback((datum) => {
 		setState({
@@ -95,20 +157,33 @@ const ProductChart = (props) => {
 		})
 	}, [])
 
-	if (loading) return 'Loading...'
-	if (error) return `Error! ${error}`
+	if (loading || !data) {
+		return (
+			<ProductChartContainer>
+				<p>Loading...</p>
+			</ProductChartContainer>
+		)
+	}
+
+	if (error) console.log(error)
+
 	if (data) {
 		return (
-			<ProductChartWrapper>
-				<Chart
-					data={ProductChartData}
-					series={ProductChartSeries}
-					axes={ProductChartAxes}
-					onFocus={onFocus}
-					primaryCursor={primaryCursor}
-					tooltip
-				/>
-			</ProductChartWrapper>
+			<ProductChartContainer>
+				<ProductChartTitle>
+					{props.metric[0].toUpperCase() + props.metric.slice(1)}
+				</ProductChartTitle>
+				<ProductChartWrapper>
+					<Chart
+						data={ProductChartData}
+						series={ProductChartSeries}
+						axes={ProductChartAxes}
+						onFocus={onFocus}
+						primaryCursor={primaryCursor}
+						tooltip
+					/>
+				</ProductChartWrapper>
+			</ProductChartContainer>
 		)
 	}
 }

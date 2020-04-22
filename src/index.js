@@ -22,7 +22,17 @@ const client = new ApolloClient({
 const ProductGrid = styled.div`
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+	justify-content: space-between;
+`
+
+const ProductChartRow = styled.div`
+	display: flex;
+	width: 100%;
+`
+
+const ProductChartWrapper = styled.div`
+	padding: 20px;
+	flex: 1;
 `
 
 const App = () => {
@@ -34,7 +44,22 @@ const App = () => {
 	// </ApolloProvider>
 
 	return <ApolloProvider client={client}>
-		<ProductChart asin={'B0791TX5P5'} />
+		<ProductChartRow>
+			<ProductChartWrapper>
+				<ProductChart asin={'B00RH5K26I'} metric="rank" />
+			</ProductChartWrapper>
+			<ProductChartWrapper>
+				<ProductChart asin={'B00RH5K26I'} metric="reviews" />
+			</ProductChartWrapper>
+		</ProductChartRow>
+		<ProductChartRow>
+			<ProductChartWrapper>
+				<ProductChart asin={'B00RH5K26I'} metric="rating" />
+			</ProductChartWrapper>
+			<ProductChartWrapper>
+				<ProductChart asin={'B00RH5K26I'} metric="price" />
+			</ProductChartWrapper>
+		</ProductChartRow>
 	</ApolloProvider>
 }
 
