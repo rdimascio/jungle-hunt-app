@@ -12,7 +12,7 @@ const TOKEN = process.env.REACT_APP_JUNGLE_HUNT_API_TOKEN || ''
 const client = new ApolloClient({
 	uri:
 		process.env.REACT_APP_NODE_ENV === 'development'
-			? 'http://localhost:8080'
+			? 'http://localhost:8080/api'
 			: 'http://api.junglehunt.io',
 	headers: {
 		authorization: TOKEN ? `Bearer ${TOKEN}` : '',

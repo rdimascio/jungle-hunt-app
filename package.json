@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://api:8080",
   "dependencies": {
     "@apollo/react-hooks": "^3.1.5",
     "@testing-library/jest-dom": "^4.2.4",
@@ -11,8 +12,8 @@
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "react": "^16.13.1",
-    "react-charts": "^2.0.0-beta.6",
     "react-dom": "^16.13.1",
+    "react-charts": "^2.0.0-beta.6",
     "react-scripts": "^3.4.1",
     "styled-components": "^4.4.1"
   },
