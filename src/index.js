@@ -1,66 +1,89 @@
 import React from 'react'
 import {render} from 'react-dom'
 import styled from 'styled-components'
-
-import ApolloClient from 'apollo-boost'
+import {ApolloClient} from 'apollo-client'
+import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory'
+import {HttpLink} from 'apollo-link-http'
 import {ApolloProvider} from '@apollo/react-hooks'
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	useRouteMatch,
+} from 'react-router-dom'
 
 import Products from './components/Products'
-import ProductChart from './components/ProductChart'
+import Product from './components/Product'
 
 const TOKEN = process.env.REACT_APP_JUNGLE_HUNT_API_TOKEN || ''
+const cache = new InMemoryCache()
+const link = new HttpLink({
+	uri: process.env.REACT_APP_JUNGLE_HUNT_API,
+})
 const client = new ApolloClient({
-	uri:
-		process.env.REACT_APP_NODE_ENV === 'development'
-			? 'http://localhost:8080/api'
-			: 'http://api.junglehunt.io',
+	link,
+	cache,
+	credentials: 'include',
 	headers: {
 		authorization: TOKEN ? `Bearer ${TOKEN}` : '',
 	},
 })
 
 const ProductGrid = styled.div`
-    display: flex;
-    flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 `
 
-const ProductChartRow = styled.div`
-	display: flex;
-	width: 100%;
-`
-
-const ProductChartWrapper = styled.div`
-	padding: 20px;
-	flex: 1;
-`
-
 const App = () => {
-	/* eslint-disable no-unused-expressions */
-	// return <ApolloProvider client={client}>
-	//     <ProductGrid>
-	//         <Products />
-	//     </ProductGrid>
-	// </ApolloProvider>
+	return (
+		<Router>
+			<div>
+				<Switch>
+					<Route exact path="/">
+						<Home />
+					</Route>
+					<Route path={`/login`}>
+						<a href="http://localhost:8080/api/v1/auth/amazon">Login with Amazon</a>
+					</Route>
+					<Route path={`/products`}>
+						<Asins />
+					</Route>
+				</Switch>
+			</div>
+		</Router>
+	)
+}
 
-	return <ApolloProvider client={client}>
-		<ProductChartRow>
-			<ProductChartWrapper>
-				<ProductChart asin={'B00RH5K26I'} metric="rank" />
-			</ProductChartWrapper>
-			<ProductChartWrapper>
-				<ProductChart asin={'B00RH5K26I'} metric="reviews" />
-			</ProductChartWrapper>
-		</ProductChartRow>
-		<ProductChartRow>
-			<ProductChartWrapper>
-				<ProductChart asin={'B00RH5K26I'} metric="rating" />
-			</ProductChartWrapper>
-			<ProductChartWrapper>
-				<ProductChart asin={'B00RH5K26I'} metric="price" />
-			</ProductChartWrapper>
-		</ProductChartRow>
-	</ApolloProvider>
+function Home() {
+	return (
+		<div>
+			<h2>Home</h2>
+		</div>
+	)
+}
+
+function Asins() {
+	let {path} = useRouteMatch()
+
+	return (
+		<div>
+			<Switch>
+				<Route exact path={path}>
+					<ApolloProvider client={client}>
+						<ProductGrid>
+							<Products />
+						</ProductGrid>
+					</ApolloProvider>
+				</Route>
+				<Route path={`${path}/:asin`}>
+					<ApolloProvider client={client}>
+						<Product />
+					</ApolloProvider>
+				</Route>
+			</Switch>
+		</div>
+	)
 }
 
 render(<App />, document.getElementById('root'))
