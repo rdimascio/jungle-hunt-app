@@ -44,7 +44,7 @@ const App = () => {
 						<Home />
 					</Route>
 					<Route path={`/login`}>
-						<a href={`${REACT_APP_JUNGLE_HUNT_API}/auth/amazon`}>Login with Amazon!</a>
+						<a href={`${process.env.REACT_APP_JUNGLE_HUNT_API}/auth/amazon`}>Login with Amazon!</a>
 					</Route>
 					<Route path={`/products`}>
 						<Asins />
