@@ -18,7 +18,7 @@ import Product from './components/Product'
 const TOKEN = process.env.REACT_APP_JUNGLE_HUNT_API_TOKEN || ''
 const cache = new InMemoryCache()
 const link = new HttpLink({
-	uri: process.env.REACT_APP_JUNGLE_HUNT_API,
+	uri: `${process.env.REACT_APP_JUNGLE_HUNT_API}/products`,
 })
 const client = new ApolloClient({
 	link,
@@ -44,7 +44,7 @@ const App = () => {
 						<Home />
 					</Route>
 					<Route path={`/login`}>
-						<a href="http://localhost:8080/api/v1/auth/amazon">Login with Amazon</a>
+						<a href={`${REACT_APP_JUNGLE_HUNT_API}/auth/amazon`}>Login with Amazon</a>
 					</Route>
 					<Route path={`/products`}>
 						<Asins />
