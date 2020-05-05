@@ -17,4 +17,4 @@ jobs:
           HOST: ${{ secrets.DEV_IP }}
           USER: ${{ secrets.DEV_USER }}
         with:
-          args: cd /var/www/jungle-hunt/app; git checkout dev; git pull origin dev; npm run build;
+          args: sudo -i; cd /var/www/jungle-hunt/app; git checkout dev; git pull origin dev; npm run build;
