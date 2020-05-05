@@ -1,0 +1,20 @@
+name: Development
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy
+        uses: maddox/actions/ssh@master
+        env:
+          PRIVATE_KEY: ${{ secrets.DEV_SSH_KEY }}
+          HOST: ${{ secrets.DEV_IP }}
+          USER: ${{ secrets.DEV_USER }}
+        with:
+          args: cd /var/www/jungle-hunt/app; git checkout dev; git pull origin dev; npm run build;
