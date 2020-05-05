@@ -2,7 +2,7 @@ import React from 'react'
 import {render} from 'react-dom'
 import styled from 'styled-components'
 import {ApolloClient} from 'apollo-client'
-import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory'
+import {InMemoryCache} from 'apollo-cache-inmemory'
 import {HttpLink} from 'apollo-link-http'
 import {ApolloProvider} from '@apollo/react-hooks'
 import {
@@ -44,7 +44,11 @@ const App = () => {
 						<Home />
 					</Route>
 					<Route path={`/login`}>
-						<a href={`${process.env.REACT_APP_JUNGLE_HUNT_API}/auth/amazon`}>Login with Amazon!</a>
+						<a
+							href={`${process.env.REACT_APP_JUNGLE_HUNT_API}/auth/amazon`}
+						>
+							Login with Amazon!
+						</a>
 					</Route>
 					<Route path={`/products`}>
 						<Asins />
