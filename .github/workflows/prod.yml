@@ -1,20 +1,20 @@
-name: Production
+# name: Production
 
-on:
-  push:
-    branches: [ master ]
+# on:
+#   push:
+#     branches: [ master ]
 
-jobs:
-  build:
+# jobs:
+#   build:
 
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy
-        uses: maddox/actions/ssh@master
-        env:
-          PRIVATE_KEY: ${{ secrets.PROD_SSH_KEY }}
-          HOST: ${{ secrets.PROD_IP }}
-          USER: ${{ secrets.PROD_USER }}
-        with:
-          args: cd /var/www/jungle-hunt/app; git checkout master; git pull origin master; npm run build;
+#     steps:
+#       - name: Deploy
+#         uses: maddox/actions/ssh@master
+#         env:
+#           PRIVATE_KEY: ${{ secrets.PROD_SSH_KEY }}
+#           HOST: ${{ secrets.PROD_IP }}
+#           USER: ${{ secrets.PROD_USER }}
+#         with:
+#           args: cd /var/www/jungle-hunt/app; git checkout master; git pull origin master; npm run build;
